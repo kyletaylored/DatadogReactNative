@@ -60,7 +60,10 @@ export const UsersListScreen: FC<UsersListScreenProps> = function UsersListScree
   }
 
   const renderUser = ({ item }: { item: User }) => (
-    <Pressable onPress={() => handleUserPress(item)}>
+    <Pressable
+      onPress={() => handleUserPress(item)}
+      accessibilityLabel={`Login as ${item.name}`}
+    >
       <Card
         style={themed($card)}
         HeadingComponent={
@@ -113,7 +116,12 @@ export const UsersListScreen: FC<UsersListScreenProps> = function UsersListScree
       <Screen preset="fixed" contentContainerStyle={themed($container)} safeAreaEdges={["bottom"]}>
         <View style={themed($errorContainer)}>
           <Text style={themed($errorText)}>Error: {error}</Text>
-          <Button text="Retry" onPress={loadUsers} style={themed($retryButton)} />
+          <Button
+            text="Retry"
+            onPress={loadUsers}
+            style={themed($retryButton)}
+            accessibilityLabel="Retry Loading Users"
+          />
         </View>
       </Screen>
     )

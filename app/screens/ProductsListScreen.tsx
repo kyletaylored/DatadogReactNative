@@ -85,7 +85,10 @@ export const ProductsListScreen: FC<ProductsListScreenProps> = function Products
   }
 
   const renderProduct = ({ item }: { item: Product }) => (
-    <Pressable onPress={() => handleProductPress(item.id)}>
+    <Pressable
+      onPress={() => handleProductPress(item.id)}
+      accessibilityLabel={`View details for ${item.title}`}
+    >
       <Card
         style={themed($card)}
         HeadingComponent={
@@ -131,7 +134,12 @@ export const ProductsListScreen: FC<ProductsListScreenProps> = function Products
       <Screen preset="fixed" contentContainerStyle={themed($container)} safeAreaEdges={["bottom"]}>
         <View style={themed($errorContainer)}>
           <Text style={themed($errorText)}>Error: {error}</Text>
-          <Button text="Retry" onPress={handleRefresh} style={themed($retryButton)} />
+          <Button
+            text="Retry"
+            onPress={handleRefresh}
+            style={themed($retryButton)}
+            accessibilityLabel="Retry Loading Products"
+          />
         </View>
       </Screen>
     )
@@ -163,7 +171,12 @@ export const ProductsListScreen: FC<ProductsListScreenProps> = function Products
       />
 
       <View style={themed($footer)}>
-        <Button text="Refresh" onPress={handleRefresh} preset="reversed" />
+        <Button
+          text="Refresh"
+          onPress={handleRefresh}
+          preset="reversed"
+          accessibilityLabel="Refresh Products List"
+        />
       </View>
     </Screen>
   )

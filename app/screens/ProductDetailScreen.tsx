@@ -83,7 +83,12 @@ export const ProductDetailScreen: FC<ProductDetailScreenProps> = function Produc
       <Screen preset="scroll" contentContainerStyle={themed($container)} safeAreaEdges={["bottom"]}>
         <View style={themed($errorContainer)}>
           <Text style={themed($errorText)}>Error: {error || "Product not found"}</Text>
-          <Button text="Retry" onPress={loadProduct} style={themed($retryButton)} />
+          <Button
+            text="Retry"
+            onPress={loadProduct}
+            style={themed($retryButton)}
+            accessibilityLabel="Retry Loading Product"
+          />
         </View>
       </Screen>
     )
@@ -113,6 +118,7 @@ export const ProductDetailScreen: FC<ProductDetailScreenProps> = function Produc
                   onPress={handlePreviousImage}
                   style={themed($imageButton)}
                   textStyle={themed($imageButtonText)}
+                  accessibilityLabel="Previous Product Image"
                 />
                 <Text style={themed($imageCounter)}>
                   {currentImageIndex + 1} / {product.images.length}
@@ -122,6 +128,7 @@ export const ProductDetailScreen: FC<ProductDetailScreenProps> = function Produc
                   onPress={handleNextImage}
                   style={themed($imageButton)}
                   textStyle={themed($imageButtonText)}
+                  accessibilityLabel="Next Product Image"
                 />
               </View>
             )}

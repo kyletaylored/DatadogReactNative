@@ -53,6 +53,7 @@ export const DemoExamplesScreen: FC<DemoTabScreenProps<"DemoExamples">> =
             onPress={goToProducts}
             preset="reversed"
             style={themed($button)}
+            accessibilityLabel="Open Products List"
           />
           <Text preset="default" size="sm" style={themed($buttonDescription)}>
             • Paginated product listing with infinite scroll
@@ -78,6 +79,7 @@ export const DemoExamplesScreen: FC<DemoTabScreenProps<"DemoExamples">> =
             onPress={goToUsers}
             preset="reversed"
             style={themed($button)}
+            accessibilityLabel="Browse Users List"
           />
           <Text preset="default" size="sm" style={themed($buttonDescription)}>
             • Fetches and displays all users
@@ -94,6 +96,7 @@ export const DemoExamplesScreen: FC<DemoTabScreenProps<"DemoExamples">> =
             onPress={goToAuth}
             preset="default"
             style={themed($button)}
+            accessibilityLabel="Login with Default User"
           />
           <Text preset="default" size="sm" style={themed($buttonDescription)}>
             • Pre-filled with first user's credentials
@@ -129,6 +132,7 @@ export const DemoExamplesScreen: FC<DemoTabScreenProps<"DemoExamples">> =
           onPress={goToWelcome}
           preset="default"
           style={themed($backButton)}
+          accessibilityLabel="Back to Welcome Screen"
         />
       </Screen>
     )

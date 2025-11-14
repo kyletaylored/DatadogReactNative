@@ -216,6 +216,7 @@ export const AuthExampleScreen: FC<AuthExampleScreenProps> = function AuthExampl
                   disabled={isLoading}
                   preset="reversed"
                   style={themed($loginButton)}
+                  accessibilityLabel="Login Button"
                 >
                   {isLoading && <ActivityIndicator color={colors.palette.neutral100} />}
                 </Button>
@@ -230,6 +231,7 @@ export const AuthExampleScreen: FC<AuthExampleScreenProps> = function AuthExampl
                   onPress={handleTestBadCredentials}
                   preset="default"
                   style={themed($testButton)}
+                  accessibilityLabel="Test Bad Credentials"
                 />
               </View>
             }
@@ -317,6 +319,7 @@ export const AuthExampleScreen: FC<AuthExampleScreenProps> = function AuthExampl
                   onPress={handleLogout}
                   preset="reversed"
                   style={themed($logoutButton)}
+                  accessibilityLabel="Logout Button"
                 />
               </View>
             }

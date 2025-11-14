@@ -65,6 +65,7 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = function WelcomeScreen(_pro
           preset="reversed"
           tx="welcomeScreen:letsGo"
           onPress={goNext}
+          accessibilityLabel="Let's Go - Open Demo"
         />
       </View>
     </Screen>
