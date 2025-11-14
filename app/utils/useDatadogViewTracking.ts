@@ -13,7 +13,7 @@ import { useNavigationState } from "@react-navigation/native"
  */
 export const useDatadogViewTracking = () => {
   const routeName = useNavigationState((state) => state?.routes[state.index]?.name)
-  const previousRouteName = useRef<string | undefined>()
+  const previousRouteName = useRef<string | undefined>(undefined)
   const isInitialLoad = useRef(true)
 
   useEffect(() => {
@@ -31,9 +31,8 @@ export const useDatadogViewTracking = () => {
         // Mark the view as loaded - this tells Datadog the view is ready
         DdRum.addViewLoadingTime(true)
       } catch (error) {
-        console.error('[Datadog] Error tracking view loading time:', error)
+        console.error("[Datadog] Error tracking view loading time:", error)
       }
-      
       previousRouteName.current = routeName
     }
   }, [routeName])
@@ -42,20 +41,8 @@ export const useDatadogViewTracking = () => {
 /**
  * Alternative hook for component-level tracking
  * Use this in individual screen components to track when they finish loading
- * 
- * @example
- * function MyScreen() {
- *   const [isLoading, setIsLoading] = useState(true)
- *   
- *   useEffect(() => {
- *     // Load your data
- *     loadData().then(() => setIsLoading(false))
- *   }, [])
- *   
- *   useDatadogViewLoadingComplete(!isLoading)
- *   
- *   return <View>...</View>
- * }
+ *
+ * @param isLoaded - Whether the view has finished loading
  */
 export const useDatadogViewLoadingComplete = (isLoaded: boolean) => {
   const hasTracked = useRef(false)
@@ -63,13 +50,12 @@ export const useDatadogViewLoadingComplete = (isLoaded: boolean) => {
   useEffect(() => {
     if (isLoaded && !hasTracked.current) {
       try {
-        console.log('[Datadog] View finished loading')
+        console.log("[Datadog] View finished loading")
         DdRum.addViewLoadingTime(true)
         hasTracked.current = true
       } catch (error) {
-        console.error('[Datadog] Error tracking view loading time:', error)
+        console.error("[Datadog] Error tracking view loading time:", error)
       }
     }
   }, [isLoaded])
 }
-

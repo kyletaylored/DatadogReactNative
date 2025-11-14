@@ -1,9 +1,9 @@
 /* eslint-env node */
 // Learn more https://docs.expo.io/guides/customizing-metro
-const { getDefaultConfig } = require("expo/metro-config")
+const { getDatadogExpoConfig } = require("@datadog/mobile-react-native/metro");
 
 /** @type {import('expo/metro-config').MetroConfig} */
-const config = getDefaultConfig(__dirname)
+const config = getDatadogExpoConfig(__dirname)
 
 config.transformer.getTransformOptions = async () => ({
   transform: {
