@@ -72,11 +72,16 @@ export const createDatadogConfig = (
  * This function should be passed to DatadogProvider's onInitialization prop
  */
 export const onDatadogInitialized = async () => {
+  console.log("[Datadog] SDK Initialized - setting up Session Replay")
+  
   await SessionReplay.enable({
     replaySampleRate: 100, // 100% of sessions will have replay
     textAndInputPrivacyLevel: TextAndInputPrivacyLevel.MASK_SENSITIVE_INPUTS,
     imagePrivacyLevel: ImagePrivacyLevel.MASK_NONE,
     touchPrivacyLevel: TouchPrivacyLevel.SHOW,
   })
-  console.log("[Datadog] Session Replay enabled")
+  
+  console.log("[Datadog] ✅ Session Replay enabled")
+  console.log("[Datadog] ✅ User interactions tracking is active")
+  console.log("[Datadog] Make sure elements have accessibilityLabel for action names")
 }

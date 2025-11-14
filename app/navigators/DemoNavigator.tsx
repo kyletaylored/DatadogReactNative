@@ -66,11 +66,7 @@ export function DemoNavigator() {
             tabBarLabel: "Examples",
             tabBarAccessibilityLabel: "Examples Tab",
             tabBarIcon: ({ focused }) => (
-              <Icon
-                icon="check"
-                color={focused ? colors.tint : colors.tintInactive}
-                size={30}
-              />
+              <Icon icon="check" color={focused ? colors.tint : colors.tintInactive} size={30} />
             ),
           }}
         />

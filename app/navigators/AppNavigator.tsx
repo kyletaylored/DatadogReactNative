@@ -120,7 +120,10 @@ export const AppNavigator = (props: NavigationProps) => {
       {...props}
       onReady={() => {
         // Start tracking views automatically with Datadog
-        DdRumReactNavigationTracking.startTrackingViews(navigationRef.current)
+        if (navigationRef.current) {
+          DdRumReactNavigationTracking.startTrackingViews(navigationRef.current)
+          console.log("[Datadog] ✅ Navigation tracking started")
+        }
       }}
     >
       <ErrorBoundary catchErrors={Config.catchErrors}>
