@@ -1,50 +1,82 @@
 /**
- * Datadog RUM (Real User Monitoring) configuration and initialization
+ * Datadog RUM (Real User Monitoring) configuration
  */
-import { DdSdkReactNative, DdSdkReactNativeConfiguration } from '@datadog/mobile-react-native'
-
-let isInitialized = false
+import {
+  BatchSize,
+  DatadogProviderConfiguration,
+  SdkVerbosity,
+  UploadFrequency,
+  TrackingConsent,
+} from "@datadog/mobile-react-native"
+import {
+  ImagePrivacyLevel,
+  SessionReplay,
+  TextAndInputPrivacyLevel,
+  TouchPrivacyLevel,
+} from "@datadog/mobile-react-native-session-replay"
 
 /**
- * Initialize Datadog RUM SDK
- * 
+ * Create Datadog configuration
+ *
  * @param clientToken - Your Datadog client token
  * @param applicationId - Your Datadog application ID
  * @param env - Environment (e.g., 'dev', 'staging', 'prod')
  */
-export const initializeDatadog = async (
+export const createDatadogConfig = (
   clientToken: string,
   applicationId: string,
-  env: string = 'dev'
+  env: string = "dev",
 ) => {
-  if (isInitialized) {
-    console.log('[Datadog] Already initialized')
-    return
-  }
-
-  const config = new DdSdkReactNativeConfiguration(
+  const config = new DatadogProviderConfiguration(
     clientToken,
     env,
     applicationId,
-    true, // track User interactions
+    true, // track User interactions (e.g., Tap on buttons)
     true, // track XHR Resources
-    true  // track Errors
+    true, // track Errors
+    TrackingConsent.GRANTED,
   )
 
-  // Optional: Set additional configuration
-  config.site = 'US1' // or 'US3', 'US5', 'EU1', 'AP1', etc.
-  config.sessionSamplingRate = 100 // Sample 100% of sessions
-  config.resourceTracingSamplingRate = 100
-  config.nativeCrashReportEnabled = true
-  config.verbosity = __DEV__ ? 'debug' : 'warn'
+  // Set Datadog site
+  config.site = "US1" // or 'US3', 'US5', 'EU1', 'AP1', etc.
 
-  await DdSdkReactNative.initialize(config)
-  isInitialized = true
-  console.log('[Datadog] RUM SDK initialized')
+  // Enable JavaScript long task collection
+  config.longTaskThresholdMs = 100
+
+  // Enable native crash reports
+  config.nativeCrashReportEnabled = true
+
+  // Sample RUM sessions (100% = all sessions tracked)
+  config.sessionSamplingRate = 100
+
+  // Enable background events tracking
+  config.trackBackgroundEvents = true
+
+  config.firstPartyHosts = ["escuelajs.co"]
+
+  // Development-specific settings
+  if (__DEV__) {
+    // Send data more frequently in dev
+    config.uploadFrequency = UploadFrequency.FREQUENT
+    // Send smaller batches of data in dev
+    config.batchSize = BatchSize.SMALL
+    // Enable debug logging
+    config.verbosity = SdkVerbosity.DEBUG
+  }
+
+  return config
 }
 
 /**
- * Check if Datadog is initialized
+ * Initialize Session Replay
+ * This function should be passed to DatadogProvider's onInitialization prop
  */
-export const isDatadogInitialized = () => isInitialized
-
+export const onDatadogInitialized = async () => {
+  await SessionReplay.enable({
+    replaySampleRate: 100, // 100% of sessions will have replay
+    textAndInputPrivacyLevel: TextAndInputPrivacyLevel.MASK_SENSITIVE_INPUTS,
+    imagePrivacyLevel: ImagePrivacyLevel.MASK_NONE,
+    touchPrivacyLevel: TouchPrivacyLevel.SHOW,
+  })
+  console.log("[Datadog] Session Replay enabled")
+}

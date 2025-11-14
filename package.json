@@ -32,6 +32,8 @@
   },
   "dependencies": {
     "@datadog/mobile-react-native": "^2.13.2",
+    "@datadog/mobile-react-native-session-replay": "^2.13.2",
+    "@datadog/mobile-react-navigation": "^2.13.2",
     "@expo-google-fonts/space-grotesk": "^0.4.0",
     "@expo/metro-runtime": "~6.1.2",
     "@react-navigation/bottom-tabs": "^7.2.0",

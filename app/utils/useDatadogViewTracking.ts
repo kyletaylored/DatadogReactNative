@@ -1,9 +1,9 @@
 /**
  * Custom hook to track React Navigation view loading times with Datadog RUM
  */
-import { useEffect, useRef } from 'react'
-import { useNavigationState } from '@react-navigation/native'
-import { DdRum } from '@datadog/mobile-react-native'
+import { useEffect, useRef } from "react"
+import { DdRum } from "@datadog/mobile-react-native"
+import { useNavigationState } from "@react-navigation/native"
 
 /**
  * Hook that tracks view loading times in Datadog RUM
@@ -12,9 +12,7 @@ import { DdRum } from '@datadog/mobile-react-native'
  * when navigation completes, calling DdRum.addViewLoadingTime(true)
  */
 export const useDatadogViewTracking = () => {
-  const routeName = useNavigationState(
-    (state) => state?.routes[state.index]?.name
-  )
+  const routeName = useNavigationState((state) => state?.routes[state.index]?.name)
   const previousRouteName = useRef<string | undefined>()
   const isInitialLoad = useRef(true)
 

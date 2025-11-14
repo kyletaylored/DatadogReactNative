@@ -4,10 +4,8 @@
  * Generally speaking, it will contain an auth flow (registration, login, forgot password)
  * and a "main" flow which the user will use once logged in.
  */
-import { useRef } from "react"
-import { DdRum } from "@datadog/mobile-react-native"
+import { DdRumReactNavigationTracking } from "@datadog/mobile-react-navigation"
 import { NavigationContainer } from "@react-navigation/native"
-import type { NavigationState } from "@react-navigation/native"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
 
 import Config from "@/config"
@@ -112,58 +110,18 @@ const AppStack = () => {
 
 export const AppNavigator = (props: NavigationProps) => {
   const { navigationTheme } = useAppTheme()
-  const routeNameRef = useRef<string | undefined>(undefined)
-  const isInitialMount = useRef(true)
 
   useBackButtonHandler((routeName) => exitRoutes.includes(routeName))
-
-  // Get the current route name from navigation state
-  const getActiveRouteName = (state: NavigationState | undefined): string | undefined => {
-    if (!state) return undefined
-
-    const route = state.routes[state.index]
-
-    // Dive into nested navigators
-    if (route.state) {
-      return getActiveRouteName(route.state as NavigationState)
-    }
-
-    return route.name
-  }
-
-  // Track navigation changes for Datadog RUM
-  const handleNavigationStateChange = (state: NavigationState | undefined) => {
-    // Call the original onStateChange if provided
-    props.onStateChange?.(state)
-
-    const currentRouteName = getActiveRouteName(state)
-
-    // Skip initial mount to avoid tracking app initialization
-    if (isInitialMount.current) {
-      isInitialMount.current = false
-      routeNameRef.current = currentRouteName
-      return
-    }
-
-    // If route changed, mark the view as loaded
-    if (currentRouteName && currentRouteName !== routeNameRef.current) {
-      try {
-        console.log(`[Datadog] View loaded: ${currentRouteName}`)
-        DdRum.addViewLoadingTime(true)
-      } catch (error) {
-        console.error("[Datadog] Error tracking view loading time:", error)
-      }
-
-      routeNameRef.current = currentRouteName
-    }
-  }
 
   return (
     <NavigationContainer
       ref={navigationRef}
       theme={navigationTheme}
       {...props}
-      onStateChange={handleNavigationStateChange}
+      onReady={() => {
+        // Start tracking views automatically with Datadog
+        DdRumReactNavigationTracking.startTrackingViews(navigationRef.current)
+      }}
     >
       <ErrorBoundary catchErrors={Config.catchErrors}>
         <AppStack />

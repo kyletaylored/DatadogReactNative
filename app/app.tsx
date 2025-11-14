@@ -21,6 +21,7 @@ import "./utils/gestureHandler"
 import { useEffect, useState } from "react"
 import { useFonts } from "expo-font"
 import * as Linking from "expo-linking"
+import { DatadogProvider } from "@datadog/mobile-react-native"
 import { KeyboardProvider } from "react-native-keyboard-controller"
 import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-context"
 
@@ -30,11 +31,18 @@ import { AppNavigator } from "./navigators/AppNavigator"
 import { useNavigationPersistence } from "./navigators/navigationUtilities"
 import { ThemeProvider } from "./theme/context"
 import { customFontsToLoad } from "./theme/typography"
-import { initializeDatadog } from "./utils/datadog"
+import { createDatadogConfig, onDatadogInitialized } from "./utils/datadog"
 import { loadDateFnsLocale } from "./utils/formatDate"
 import * as storage from "./utils/storage"
 
 export const NAVIGATION_PERSISTENCE_KEY = "NAVIGATION_STATE"
+
+// Datadog configuration
+const datadogConfig = createDatadogConfig(
+  "pub1be9020eb9c7eb8b998d0948f902fe2c", // Your client token
+  "0f71dd56-3bdf-445d-9712-2a9b127a29cf", // Your application ID
+  __DEV__ ? "dev" : "prod",
+)
 
 // Web linking configuration
 const prefix = Linking.createURL("/")
@@ -76,16 +84,6 @@ export function App() {
     initI18n()
       .then(() => setIsI18nInitialized(true))
       .then(() => loadDateFnsLocale())
-      .then(() => {
-        // Initialize Datadog RUM
-        // TODO: Replace with your actual Datadog credentials
-        // You can store these in your config files
-        return initializeDatadog(
-          "pub1be9020eb9c7eb8b998d0948f902fe2c",
-          "0f71dd56-3bdf-445d-9712-2a9b127a29cf",
-          __DEV__ ? "dev" : "prod",
-        )
-      })
       .catch((error) => {
         console.error("[App] Initialization error:", error)
       })
@@ -108,18 +106,20 @@ export function App() {
 
   // otherwise, we're ready to render the app
   return (
-    <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-      <KeyboardProvider>
-        <AuthProvider>
-          <ThemeProvider>
-            <AppNavigator
-              linking={linking}
-              initialState={initialNavigationState}
-              onStateChange={onNavigationStateChange}
-            />
-          </ThemeProvider>
-        </AuthProvider>
-      </KeyboardProvider>
-    </SafeAreaProvider>
+    <DatadogProvider configuration={datadogConfig} onInitialization={onDatadogInitialized}>
+      <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+        <KeyboardProvider>
+          <AuthProvider>
+            <ThemeProvider>
+              <AppNavigator
+                linking={linking}
+                initialState={initialNavigationState}
+                onStateChange={onNavigationStateChange}
+              />
+            </ThemeProvider>
+          </AuthProvider>
+        </KeyboardProvider>
+      </SafeAreaProvider>
+    </DatadogProvider>
   )
 }
