@@ -30,6 +30,7 @@ import { AppNavigator } from "./navigators/AppNavigator"
 import { useNavigationPersistence } from "./navigators/navigationUtilities"
 import { ThemeProvider } from "./theme/context"
 import { customFontsToLoad } from "./theme/typography"
+import { initializeDatadog } from "./utils/datadog"
 import { loadDateFnsLocale } from "./utils/formatDate"
 import * as storage from "./utils/storage"
 
@@ -50,7 +51,7 @@ const config = {
         },
         DemoDebug: "debug",
         DemoPodcastList: "podcast",
-        DemoCommunity: "community",
+        DemoExamples: "examples",
       },
     },
   },
@@ -75,6 +76,19 @@ export function App() {
     initI18n()
       .then(() => setIsI18nInitialized(true))
       .then(() => loadDateFnsLocale())
+      .then(() => {
+        // Initialize Datadog RUM
+        // TODO: Replace with your actual Datadog credentials
+        // You can store these in your config files
+        return initializeDatadog(
+          "pub1be9020eb9c7eb8b998d0948f902fe2c",
+          "0f71dd56-3bdf-445d-9712-2a9b127a29cf",
+          __DEV__ ? "dev" : "prod",
+        )
+      })
+      .catch((error) => {
+        console.error("[App] Initialization error:", error)
+      })
   }, [])
 
   // Before we show the app, we have to wait for our state to be ready.

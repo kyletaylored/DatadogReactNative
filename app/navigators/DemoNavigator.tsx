@@ -5,8 +5,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { Icon } from "@/components/Icon"
 import { EpisodeProvider } from "@/context/EpisodeContext"
 import { translate } from "@/i18n/translate"
-import { DemoCommunityScreen } from "@/screens/DemoCommunityScreen"
 import { DemoDebugScreen } from "@/screens/DemoDebugScreen"
+import { DemoExamplesScreen } from "@/screens/DemoExamplesScreen"
 import { DemoPodcastListScreen } from "@/screens/DemoPodcastListScreen"
 import { DemoShowroomScreen } from "@/screens/DemoShowroomScreen/DemoShowroomScreen"
 import { useAppTheme } from "@/theme/context"
@@ -59,13 +59,13 @@ export function DemoNavigator() {
         />
 
         <Tab.Screen
-          name="DemoCommunity"
-          component={DemoCommunityScreen}
+          name="DemoExamples"
+          component={DemoExamplesScreen}
           options={{
-            tabBarLabel: translate("demoNavigator:communityTab"),
+            tabBarLabel: "Examples",
             tabBarIcon: ({ focused }) => (
               <Icon
-                icon="community"
+                icon="check"
                 color={focused ? colors.tint : colors.tintInactive}
                 size={30}
               />

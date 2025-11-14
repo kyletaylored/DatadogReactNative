@@ -9,7 +9,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack"
 
 // Demo Tab Navigator types
 export type DemoTabParamList = {
-  DemoCommunity: undefined
+  DemoExamples: undefined
   DemoShowroom: { queryIndex?: string; itemIndex?: string }
   DemoDebug: undefined
   DemoPodcastList: undefined
@@ -20,6 +20,14 @@ export type AppStackParamList = {
   Welcome: undefined
   Login: undefined
   Demo: NavigatorScreenParams<DemoTabParamList>
+  ProductsList: undefined
+  ProductDetail: { productId: number }
+  UsersList: undefined
+  AuthExample: {
+    prefilledEmail?: string
+    prefilledPassword?: string
+    userName?: string
+  }
   // 🔥 Your screens go here
   // IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST
 }
