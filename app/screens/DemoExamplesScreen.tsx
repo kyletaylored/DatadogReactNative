@@ -1,5 +1,5 @@
 import { FC } from "react"
-import { Image, ImageStyle, TextStyle, View, ViewStyle } from "react-native"
+import { Image, ImageStyle, Pressable, TextStyle, View, ViewStyle } from "react-native"
 
 import { Button } from "@/components/Button"
 import { Screen } from "@/components/Screen"
@@ -48,13 +48,18 @@ export const DemoExamplesScreen: FC<DemoTabScreenProps<"DemoExamples">> =
             🛍️ E-Commerce Examples
           </Text>
 
-          <Button
-            text="Products List (Pagination)"
+          <Pressable
             onPress={goToProducts}
-            preset="reversed"
-            style={themed($button)}
             accessibilityLabel="Open Products List"
-          />
+            accessibilityRole="button"
+          >
+            <Button
+              text="Products List (Pagination)"
+              onPress={goToProducts}
+              preset="reversed"
+              style={themed($button)}
+            />
+          </Pressable>
           <Text preset="default" size="sm" style={themed($buttonDescription)}>
             • Paginated product listing with infinite scroll
           </Text>

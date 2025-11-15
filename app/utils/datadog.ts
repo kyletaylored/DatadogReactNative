@@ -6,7 +6,6 @@ import {
   DatadogProviderConfiguration,
   SdkVerbosity,
   UploadFrequency,
-  TrackingConsent,
 } from "@datadog/mobile-react-native"
 import {
   ImagePrivacyLevel,
@@ -34,7 +33,6 @@ export const createDatadogConfig = (
     true, // track User interactions (e.g., Tap on buttons)
     true, // track XHR Resources
     true, // track Errors
-    TrackingConsent.GRANTED,
   )
 
   // Set Datadog site
@@ -52,7 +50,11 @@ export const createDatadogConfig = (
   // Enable background events tracking
   config.trackBackgroundEvents = true
 
-  config.firstPartyHosts = ["escuelajs.co"]
+  // Set first party hosts
+  config.firstPartyHosts = ["api.escuelajs.co"]
+
+  // Enable native interaction tracking
+  config.nativeInteractionTracking = true
 
   // Development-specific settings
   if (__DEV__) {
@@ -73,15 +75,13 @@ export const createDatadogConfig = (
  */
 export const onDatadogInitialized = async () => {
   console.log("[Datadog] SDK Initialized - setting up Session Replay")
-  
+
   await SessionReplay.enable({
     replaySampleRate: 100, // 100% of sessions will have replay
     textAndInputPrivacyLevel: TextAndInputPrivacyLevel.MASK_SENSITIVE_INPUTS,
     imagePrivacyLevel: ImagePrivacyLevel.MASK_NONE,
     touchPrivacyLevel: TouchPrivacyLevel.SHOW,
   })
-  
+
   console.log("[Datadog] ✅ Session Replay enabled")
-  console.log("[Datadog] ✅ User interactions tracking is active")
-  console.log("[Datadog] Make sure elements have accessibilityLabel for action names")
 }
