@@ -86,6 +86,10 @@ web-build/
 # Configurations
 !env.js
 
+# Environment variables
+.env
+.env.local
+
 /coverage
 
 # Yarn

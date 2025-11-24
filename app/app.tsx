@@ -19,6 +19,7 @@ if (__DEV__) {
 import "./utils/gestureHandler"
 
 import { useEffect, useState } from "react"
+import Constants from "expo-constants"
 import { useFonts } from "expo-font"
 import * as Linking from "expo-linking"
 import { DatadogProvider } from "@datadog/mobile-react-native"
@@ -37,11 +38,12 @@ import * as storage from "./utils/storage"
 
 export const NAVIGATION_PERSISTENCE_KEY = "NAVIGATION_STATE"
 
-// Datadog configuration
+// Get Datadog configuration from environment variables
+const datadogEnv = Constants.expoConfig?.extra?.datadog
 const datadogConfig = createDatadogConfig(
-  "pub1be9020eb9c7eb8b998d0948f902fe2c", // Your client token
-  "0f71dd56-3bdf-445d-9712-2a9b127a29cf", // Your application ID
-  __DEV__ ? "dev" : "prod",
+  datadogEnv?.clientToken || "",
+  datadogEnv?.applicationId || "",
+  datadogEnv?.env || (__DEV__ ? "dev" : "prod"),
 )
 
 // Web linking configuration

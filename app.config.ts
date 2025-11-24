@@ -19,6 +19,14 @@ module.exports = ({ config }: ConfigContext): Partial<ExpoConfig> => {
 
   return {
     ...config,
+    extra: {
+      // Datadog configuration from environment variables
+      datadog: {
+        clientToken: process.env.DATADOG_CLIENT_TOKEN,
+        applicationId: process.env.DATADOG_APPLICATION_ID,
+        env: process.env.DATADOG_ENV || "dev",
+      },
+    },
     ios: {
       ...config.ios,
       // This privacyManifests is to get you started.
