@@ -16,9 +16,9 @@ import { PressableIcon } from "@/components/Icon"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { TextField, type TextFieldAccessoryProps } from "@/components/TextField"
+import { useAuth } from "@/context/AuthContext"
 import type { AppStackScreenProps } from "@/navigators/navigationTypes"
 import { fetchUserProfile, fetchUsers, login } from "@/services/api/platzi-api"
-import type { UserProfile } from "@/services/api/platzi-api.types"
 import { useAppTheme } from "@/theme/context"
 import type { ThemedStyle } from "@/theme/types"
 import { useDatadogViewLoadingComplete } from "@/utils/useDatadogViewTracking"
@@ -31,6 +31,8 @@ export const AuthExampleScreen: FC<AuthExampleScreenProps> = function AuthExampl
     theme: { colors },
   } = useAppTheme()
 
+  const { userProfile, loginWithProfile, logout: authLogout } = useAuth()
+
   const passwordInput = useRef<TextInput>(null)
 
   const [email, setEmail] = useState("")
@@ -40,7 +42,6 @@ export const AuthExampleScreen: FC<AuthExampleScreenProps> = function AuthExampl
   const [isLoadingUsers, setIsLoadingUsers] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [accessToken, setAccessToken] = useState<string | null>(null)
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
 
   // Track view loading with Datadog - view is ready when users are loaded
   useDatadogViewLoadingComplete(!isLoadingUsers)
@@ -85,7 +86,6 @@ export const AuthExampleScreen: FC<AuthExampleScreenProps> = function AuthExampl
 
     setIsLoading(true)
     setError(null)
-    setUserProfile(null)
 
     try {
       // Step 1: Login
@@ -94,7 +94,9 @@ export const AuthExampleScreen: FC<AuthExampleScreenProps> = function AuthExampl
 
       // Step 2: Fetch profile
       const profile = await fetchUserProfile(loginResponse.access_token)
-      setUserProfile(profile)
+      
+      // Step 3: Store user profile and track with Datadog
+      loginWithProfile(loginResponse.access_token, profile)
     } catch (err: any) {
       if (err.statusCode === 401) {
         setError("Invalid credentials. Please try again.")
@@ -113,8 +115,8 @@ export const AuthExampleScreen: FC<AuthExampleScreenProps> = function AuthExampl
 
   const handleLogout = () => {
     setAccessToken(null)
-    setUserProfile(null)
     setError(null)
+    authLogout()
   }
 
   const handleTestBadCredentials = () => {

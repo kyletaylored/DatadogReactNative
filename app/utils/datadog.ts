@@ -4,6 +4,7 @@
 import {
   BatchSize,
   DatadogProviderConfiguration,
+  DdSdkReactNative,
   SdkVerbosity,
   UploadFrequency,
 } from "@datadog/mobile-react-native"
@@ -84,4 +85,40 @@ export const onDatadogInitialized = async () => {
   })
 
   console.log("[Datadog] ✅ Session Replay enabled")
+}
+
+/**
+ * Set user information for Datadog tracking
+ * Call this after successful login to track user sessions
+ */
+export const setDatadogUser = (user: {
+  id: string | number
+  name?: string
+  email?: string
+  extraInfo?: Record<string, any>
+}) => {
+  try {
+    DdSdkReactNative.setUserInfo({
+      id: String(user.id),
+      name: user.name,
+      email: user.email,
+      extraInfo: user.extraInfo,
+    })
+    console.log("[Datadog] ✅ User info set:", { id: user.id, name: user.name, email: user.email })
+  } catch (error) {
+    console.error("[Datadog] ❌ Error setting user info:", error)
+  }
+}
+
+/**
+ * Clear user information from Datadog tracking
+ * Call this on logout to stop tracking the user
+ */
+export const clearDatadogUser = () => {
+  try {
+    DdSdkReactNative.setUserInfo({})
+    console.log("[Datadog] ✅ User info cleared")
+  } catch (error) {
+    console.error("[Datadog] ❌ Error clearing user info:", error)
+  }
 }
