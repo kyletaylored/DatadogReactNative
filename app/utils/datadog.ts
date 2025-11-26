@@ -1,12 +1,17 @@
 /**
  * Datadog RUM (Real User Monitoring) configuration
  */
+import { Platform } from "react-native"
+import * as Application from "expo-application"
 import {
   BatchSize,
   DatadogProviderConfiguration,
   DdSdkReactNative,
+  DdRum,
   SdkVerbosity,
   UploadFrequency,
+  RumActionType,
+  ErrorSource,
 } from "@datadog/mobile-react-native"
 import {
   ImagePrivacyLevel,
@@ -84,7 +89,17 @@ export const onDatadogInitialized = async () => {
     touchPrivacyLevel: TouchPrivacyLevel.SHOW,
   })
 
-  console.log("[Datadog] ✅ Session Replay enabled")
+  // Set recommended global attributes
+  setGlobalAttributes({
+    app_version: Application.nativeApplicationVersion || "unknown",
+    build_version: Application.nativeBuildVersion || "unknown",
+    platform_os: Platform.OS,
+    platform_version: Platform.Version,
+    is_emulator: !Platform.isTesting, // Rough check for emulator/sim
+    font_scale: 1.0, // Default, can be updated if dynamic type changes
+  })
+
+  console.log("[Datadog] ✅ Session Replay enabled & attributes set")
 }
 
 /**
@@ -116,9 +131,130 @@ export const setDatadogUser = (user: {
  */
 export const clearDatadogUser = () => {
   try {
-    DdSdkReactNative.setUserInfo({})
+    DdSdkReactNative.setUserInfo({ id: "" })
     console.log("[Datadog] ✅ User info cleared")
   } catch (error) {
     console.error("[Datadog] ❌ Error clearing user info:", error)
+  }
+}
+
+// ==========================================
+// Custom Attributes & Tracking
+// ==========================================
+
+/**
+ * Set global custom attributes that will be attached to all future RUM events
+ * (Sessions, Views, Actions, Errors, Resources)
+ */
+export const setGlobalAttributes = (attributes: Record<string, unknown>) => {
+  try {
+    DdSdkReactNative.setAttributes(attributes)
+    console.log("[Datadog] 🎨 Global attributes set:", attributes)
+  } catch (error) {
+    console.error("[Datadog] ❌ Error setting global attributes:", error)
+  }
+}
+
+/**
+ * Log a custom user action with attributes
+ */
+export const trackAction = (
+  name: string,
+  type: "tap" | "scroll" | "swipe" | "custom" = "custom",
+  attributes: Record<string, unknown> = {},
+) => {
+  try {
+    let actionType: RumActionType
+    switch (type) {
+      case "tap":
+        actionType = RumActionType.TAP
+        break
+      case "scroll":
+        actionType = RumActionType.SCROLL
+        break
+      case "swipe":
+        actionType = RumActionType.SWIPE
+        break
+      case "custom":
+      default:
+        actionType = RumActionType.CUSTOM
+        break
+    }
+    DdRum.addAction(actionType, name, attributes)
+  } catch (error) {
+    console.error("[Datadog] ❌ Error tracking action:", error)
+  }
+}
+
+// Track currently loading elements
+const activeLoadingElements = new Set<string>()
+
+/**
+ * Track the loading state of a UI element or process.
+ * Returns callbacks to mark the load as successful or failed.
+ *
+ * This updates the global 'loading_elements' attribute, allowing you to find
+ * sessions where elements started loading but never finished (stuck/abandoned).
+ *
+ * @param elementName - Unique name for the element/process (e.g., "CheckoutButton", "UserProfile")
+ */
+export const trackElementLoading = (elementName: string) => {
+  // Add to active set
+  activeLoadingElements.add(elementName)
+  updateLoadingAttributes()
+
+  const startTime = Date.now()
+
+  return {
+    /**
+     * Call when the element successfully finishes loading
+     */
+    success: (additionalAttributes?: Record<string, unknown>) => {
+      activeLoadingElements.delete(elementName)
+      updateLoadingAttributes()
+
+      const duration = Date.now() - startTime
+      DdRum.addAction(RumActionType.CUSTOM, "Element Loaded", {
+        element_name: elementName,
+        duration_ms: duration,
+        success: true,
+        ...additionalAttributes,
+      })
+    },
+
+    /**
+     * Call when the element fails to load
+     */
+    error: (error?: Error | unknown) => {
+      activeLoadingElements.delete(elementName)
+      updateLoadingAttributes()
+
+      DdRum.addError(
+        `Element Load Failed: ${elementName}`,
+        ErrorSource.CUSTOM,
+        error instanceof Error ? error.stack || error.message : "Unknown error",
+        {
+          element_name: elementName,
+          failed_load: true,
+        },
+      )
+    },
+  }
+}
+
+/**
+ * Helper to update the global RUM context with the current list of loading elements
+ */
+const updateLoadingAttributes = () => {
+  try {
+    const loadingList = Array.from(activeLoadingElements)
+    // 'loading_elements' will contain the names of all elements currently pending
+    DdSdkReactNative.setAttributes({
+      loading_elements: loadingList,
+      // 'has_pending_loads' is a quick boolean filter
+      has_pending_loads: loadingList.length > 0,
+    })
+  } catch (error) {
+    console.error("[Datadog] ❌ Error updating loading attributes:", error)
   }
 }

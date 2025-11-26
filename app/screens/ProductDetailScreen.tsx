@@ -18,6 +18,7 @@ import { fetchProduct } from "@/services/api/platzi-api"
 import type { Product } from "@/services/api/platzi-api.types"
 import { useAppTheme } from "@/theme/context"
 import type { ThemedStyle } from "@/theme/types"
+import { TrackedLoading } from "@/utils/useDatadogTiming"
 import { useDatadogViewLoadingComplete } from "@/utils/useDatadogViewTracking"
 
 interface ProductDetailScreenProps extends AppStackScreenProps<"ProductDetail"> {}
@@ -105,44 +106,47 @@ export const ProductDetailScreen: FC<ProductDetailScreenProps> = function Produc
 
         {/* Image Gallery */}
         {product.images.length > 0 && (
-          <View style={themed($imageGallery)}>
-            <Image
-              source={{ uri: product.images[currentImageIndex] }}
-              style={$productImage}
-              resizeMode="cover"
-            />
-            {product.images.length > 1 && (
-              <View style={themed($imageControls)}>
-                <Button
-                  text="←"
-                  onPress={handlePreviousImage}
-                  style={themed($imageButton)}
-                  textStyle={themed($imageButtonText)}
-                  accessibilityLabel="Previous Product Image"
-                />
-                <Text style={themed($imageCounter)}>
-                  {currentImageIndex + 1} / {product.images.length}
-                </Text>
-                <Button
-                  text="→"
-                  onPress={handleNextImage}
-                  style={themed($imageButton)}
-                  textStyle={themed($imageButtonText)}
-                  accessibilityLabel="Next Product Image"
-                />
-              </View>
-            )}
-          </View>
+          <TrackedLoading name="product_image_gallery">
+            <View style={themed($imageGallery)}>
+              <Image
+                source={{ uri: product.images[currentImageIndex] }}
+                style={$productImage}
+                resizeMode="cover"
+              />
+              {product.images.length > 1 && (
+                <View style={themed($imageControls)}>
+                  <Button
+                    text="←"
+                    onPress={handlePreviousImage}
+                    style={themed($imageButton)}
+                    textStyle={themed($imageButtonText)}
+                    accessibilityLabel="Previous Product Image"
+                  />
+                  <Text style={themed($imageCounter)}>
+                    {currentImageIndex + 1} / {product.images.length}
+                  </Text>
+                  <Button
+                    text="→"
+                    onPress={handleNextImage}
+                    style={themed($imageButton)}
+                    textStyle={themed($imageButtonText)}
+                    accessibilityLabel="Next Product Image"
+                  />
+                </View>
+              )}
+            </View>
+          </TrackedLoading>
         )}
 
         {/* Product Info */}
-        <Card
-          style={themed($card)}
-          ContentComponent={
-            <View style={themed($cardContent)}>
-              <Text preset="bold" size="xl" style={themed($productTitle)}>
-                {product.title}
-              </Text>
+        <TrackedLoading name="product_info_card">
+          <Card
+            style={themed($card)}
+            ContentComponent={
+              <View style={themed($cardContent)}>
+                <Text preset="bold" size="xl" style={themed($productTitle)}>
+                  {product.title}
+                </Text>
 
               <View style={themed($row)}>
                 <Text preset="bold" size="xxl" style={themed($price)}>
@@ -193,9 +197,10 @@ export const ProductDetailScreen: FC<ProductDetailScreenProps> = function Produc
                   {new Date(product.updatedAt).toLocaleDateString()}
                 </Text>
               </View>
-            </View>
-          }
-        />
+              </View>
+            }
+          />
+        </TrackedLoading>
 
       </ScrollView>
     </Screen>
