@@ -1,3 +1,5 @@
+[🏠 Home](./README.md) | [⚙️ Setup](./DATADOG_SETUP.md) | [🔑 Env](./ENV_SETUP.md) | [👤 Users](./USER_TRACKING_IMPLEMENTATION.md) | [📊 Custom](./CUSTOM_TRACKING.md) | [⏱️ Timing](./COMPONENT_TIMING.md)
+
 # Datadog React Native RUM Demo
 
 This application demonstrates a full-featured integration of **Datadog Real User Monitoring (RUM)** in a React Native (Expo) environment. It showcases best practices for tracking user sessions, measuring performance, handling errors, and protecting user privacy.
