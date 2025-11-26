@@ -1,77 +1,93 @@
-# Welcome to your new ignited app!
+# Datadog React Native RUM Demo
 
-> The latest and greatest boilerplate for Infinite Red opinions
+This application demonstrates a full-featured integration of **Datadog Real User Monitoring (RUM)** in a React Native (Expo) environment. It showcases best practices for tracking user sessions, measuring performance, handling errors, and protecting user privacy.
 
-This is the boilerplate that [Infinite Red](https://infinite.red) uses as a way to test bleeding-edge changes to our React Native stack.
+The app simulates an e-commerce store using the [Platzi Fake Store API](https://fakeapi.platzi.com/), allowing you to generate real RUM data through realistic user flows like browsing products, logging in, and simulating errors.
 
-- [Quick start documentation](https://github.com/infinitered/ignite/blob/master/docs/boilerplate/Boilerplate.md)
-- [Full documentation](https://github.com/infinitered/ignite/blob/master/docs/README.md)
+## 📚 Documentation Index
 
-## Getting Started
+We have created detailed guides for each aspect of the integration:
+
+| Topic | Description |
+|-------|-------------|
+| **[Datadog Setup](./DATADOG_SETUP.md)** | Initial configuration, SDK installation, and basic initialization. |
+| **[Environment Setup](./ENV_SETUP.md)** | How to securely manage API keys and credentials using `.env` files. |
+| **[User Tracking](./USER_TRACKING_IMPLEMENTATION.md)** | Implementing persistent user identification (ID, name, email, role) across sessions. |
+| **[Custom Attributes](./CUSTOM_TRACKING.md)** | Adding global metadata (e.g., app version) and tracking "stuck" loading states. |
+| **[Component Timing](./COMPONENT_TIMING.md)** | Measuring render times of specific components using HOCs and hooks. |
+
+## 🚀 Getting Started
+
+### 1. Prerequisites
+- Node.js >= 18
+- React Native development environment set up
+- A Datadog account (you'll need a Client Token and Application ID)
+
+### 2. Installation
 
 ```bash
-npm install --legacy-peer-deps
-npm run start
+# Install dependencies
+npm install
+
+# Install iOS pods (if on macOS)
+cd ios && pod install && cd ..
 ```
 
-To make things work on your local simulator, or on your phone, you need first to [run `eas build`](https://github.com/infinitered/ignite/blob/master/docs/expo/EAS.md). We have many shortcuts on `package.json` to make it easier:
+### 3. Configuration
+
+Create a `.env` file in the root directory with your Datadog credentials:
 
 ```bash
-npm run build:ios:sim # build for ios simulator
-npm run build:ios:device # build for ios device
-npm run build:ios:prod # build for ios device
+DATADOG_CLIENT_TOKEN=your_client_token
+DATADOG_APPLICATION_ID=your_application_id
+DATADOG_ENV=dev
+```
+*(See [ENV_SETUP.md](./ENV_SETUP.md) for more details)*
+
+### 4. Running the App
+
+```bash
+# Run on iOS Simulator
+npm run ios
+
+# Run on Android Emulator
+npm run android
 ```
 
-### `./assets` directory
+## 💡 Key Demo Features
 
-This directory is designed to organize and store various assets, making it easy for you to manage and use them in your application. The assets are further categorized into subdirectories, including `icons` and `images`:
+Navigate to **Demo Examples** in the app to see these in action:
 
-```tree
-assets
-├── icons
-└── images
-```
+### 🛍️ E-Commerce Flows
+- **Paginated Lists**: Tracks scroll performance and infinite loading.
+- **Product Details**: Measures "Time to Interactive" for complex views using custom component timing.
+- **Image Gallery**: Tracks image loading performance.
 
-**icons**
-This is where your icon assets will live. These icons can be used for buttons, navigation elements, or any other UI components. The recommended format for icons is PNG, but other formats can be used as well.
+### 🔐 Authentication & User Tracking
+- **Real User Identification**: Logs users in and ties their RUM session to their profile.
+- **Persistent Sessions**: User identity survives app restarts.
+- **Role-Based Tracking**: Tracks user roles (e.g., 'admin', 'customer') as custom attributes.
+- *(See [USER_TRACKING_IMPLEMENTATION.md](./USER_TRACKING_IMPLEMENTATION.md))*
 
-Ignite comes with a built-in `Icon` component. You can find detailed usage instructions in the [docs](https://github.com/infinitered/ignite/blob/master/docs/boilerplate/app/components/Icon.md).
+### ⚠️ Error Handling & Debugging
+- **Crash Reporting**: Native crash reporting is enabled.
+- **Handled Errors**: "Test Bad Credentials" button to generate 401 errors.
+- **Stuck Loading States**: Simulates and tracks elements that fail to load properly.
+- *(See [CUSTOM_TRACKING.md](./CUSTOM_TRACKING.md))*
 
-**images**
-This is where your images will live, such as background images, logos, or any other graphics. You can use various formats such as PNG, JPEG, or GIF for your images.
+### 📊 Performance Monitoring
+- **View Loading Times**: Automatic React Navigation tracking.
+- **Component Timing**: Granular measurement of specific UI components (e.g., Hero Images).
+- **Resource Timing**: Network request tracking for all API calls.
+- *(See [COMPONENT_TIMING.md](./COMPONENT_TIMING.md))*
 
-Another valuable built-in component within Ignite is the `AutoImage` component. You can find detailed usage instructions in the [docs](https://github.com/infinitered/ignite/blob/master/docs/Components-AutoImage.md).
+## 🛠️ Project Structure
 
-How to use your `icon` or `image` assets:
+- `app/utils/datadog.ts`: Core SDK initialization and helper functions.
+- `app/utils/useDatadogTiming.ts`: Custom hooks for measuring component performance.
+- `app/context/AuthContext.tsx`: Authentication logic integrated with RUM user tracking.
+- `app/screens/AuthExampleScreen.tsx`: Demo screen for login flows.
+- `app/screens/ProductDetailScreen.tsx`: Demo screen for component timing.
 
-```typescript
-import { Image } from 'react-native';
-
-const MyComponent = () => {
-  return (
-    <Image source={require('assets/images/my_image.png')} />
-  );
-};
-```
-
-## Running Maestro end-to-end tests
-
-Follow our [Maestro Setup](https://ignitecookbook.com/docs/recipes/MaestroSetup) recipe.
-
-## Next Steps
-
-### Ignite Cookbook
-
-[Ignite Cookbook](https://ignitecookbook.com/) is an easy way for developers to browse and share code snippets (or “recipes”) that actually work.
-
-### Upgrade Ignite boilerplate
-
-Read our [Upgrade Guide](https://ignitecookbook.com/docs/recipes/UpdatingIgnite) to learn how to upgrade your Ignite project.
-
-## Community
-
-⭐️ Help us out by [starring on GitHub](https://github.com/infinitered/ignite), filing bug reports in [issues](https://github.com/infinitered/ignite/issues) or [ask questions](https://github.com/infinitered/ignite/discussions).
-
-💬 Join us on [Slack](https://join.slack.com/t/infiniteredcommunity/shared_invite/zt-1f137np4h-zPTq_CbaRFUOR_glUFs2UA) to discuss.
-
-📰 Make our Editor-in-chief happy by [reading the React Native Newsletter](https://reactnativenewsletter.com/).
+---
+*Built with [Ignite](https://github.com/infinitered/ignite) and [Expo](https://expo.dev).*
