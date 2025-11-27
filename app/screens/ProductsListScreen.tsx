@@ -19,6 +19,8 @@ import { fetchProducts } from "@/services/api/platzi-api"
 import type { Product } from "@/services/api/platzi-api.types"
 import { useAppTheme } from "@/theme/context"
 import type { ThemedStyle } from "@/theme/types"
+import { trackAction } from "@/utils/datadog"
+import { DatadogProfiler } from "@/utils/useDatadogTiming"
 import { useDatadogViewLoadingComplete } from "@/utils/useDatadogViewTracking"
 
 interface ProductsListScreenProps extends AppStackScreenProps<"ProductsList"> {}
@@ -81,6 +83,7 @@ export const ProductsListScreen: FC<ProductsListScreenProps> = function Products
   }
 
   const handleProductPress = (productId: number) => {
+    trackAction("ProductSelected", "tap", { product_id: productId })
     navigation.navigate("ProductDetail", { productId })
   }
 
@@ -153,22 +156,24 @@ export const ProductsListScreen: FC<ProductsListScreenProps> = function Products
         </Text>
       </View>
 
-      <FlatList
-        data={products}
-        renderItem={renderProduct}
-        keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={themed($listContent)}
-        onEndReached={handleLoadMore}
-        onEndReachedThreshold={0.5}
-        ListFooterComponent={
-          isLoadingMore ? (
-            <View style={themed($footerLoader)}>
-              <ActivityIndicator size="small" />
-              <Text style={themed($footerText)}>Loading more...</Text>
-            </View>
-          ) : null
-        }
-      />
+      <DatadogProfiler name="ProductsFlatList">
+        <FlatList
+          data={products}
+          renderItem={renderProduct}
+          keyExtractor={(item) => item.id.toString()}
+          contentContainerStyle={themed($listContent)}
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={
+            isLoadingMore ? (
+              <View style={themed($footerLoader)}>
+                <ActivityIndicator size="small" />
+                <Text style={themed($footerText)}>Loading more...</Text>
+              </View>
+            ) : null
+          }
+        />
+      </DatadogProfiler>
 
       <View style={themed($footer)}>
         <Button

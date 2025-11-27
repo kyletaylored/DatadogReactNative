@@ -11,6 +11,7 @@ import { useAuth } from "@/context/AuthContext"
 import type { AppStackScreenProps } from "@/navigators/navigationTypes"
 import { useAppTheme } from "@/theme/context"
 import type { ThemedStyle } from "@/theme/types"
+import { trackAction } from "@/utils/datadog"
 
 interface LoginScreenProps extends AppStackScreenProps<"Login"> {}
 
@@ -40,6 +41,8 @@ export const LoginScreen: FC<LoginScreenProps> = () => {
   function login() {
     setIsSubmitted(true)
     setAttemptsCount(attemptsCount + 1)
+
+    trackAction("AttemptLogin", "tap", { attempt: attemptsCount + 1, email_length: authEmail.length })
 
     if (validationError) return
 

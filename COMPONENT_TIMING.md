@@ -51,14 +51,36 @@ const MyComponent = () => {
 }
 ```
 
+### 4. `<DatadogProfiler>` Component (New!)
+A wrapper that uses the official `React.Profiler` API to measure the cost of rendering.
+
+**What it measures:**
+- **Actual Duration**: Time spent rendering the committed update.
+- **Base Duration**: Estimated time to render the entire subtree without memoization.
+- **Render Phase**: "mount" or "update".
+
+**Usage:**
+```tsx
+import { DatadogProfiler } from "@/utils/useDatadogTiming"
+
+<DatadogProfiler name="ComplexProductList">
+  <FlatList ... />
+</DatadogProfiler>
+```
+
+**Result:**
+Logs a custom action named `ComplexProductList_rendered` with full performance metrics attached.
+
 ## Use Cases
 
-- **Lazy Loaded Content**: Track exactly when content appears after a fetch.
-- **Conditional Rendering**: Track when specific UI elements (like error messages or success states) appear.
-- **Performance Monitoring**: Identify slow-to-render components.
+- **Lazy Loaded Content**: Track exactly when content appears after a fetch (`TrackedLoading`).
+- **Conditional Rendering**: Track when specific UI elements appear.
+- **Render Performance**: Identify components that are expensive to render (`DatadogProfiler`).
 
 ## Implementation Details
-- **File**: `app/utils/useDatadogTiming.ts`
-- **Mechanism**: Uses `useEffect` with an empty dependency array to trigger on mount.
-- **Duplicate Prevention**: Uses a `ref` to ensure the timing is only sent once per component instance.
+- **File**: `app/utils/useDatadogTiming.tsx`
+- **Mechanism**:
+  - `TrackedLoading`: Uses `useEffect` (mount timing).
+  - `DatadogProfiler`: Uses `React.Profiler` (render cost).
+
 

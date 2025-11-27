@@ -19,6 +19,7 @@ import { fetchUsers } from "@/services/api/platzi-api"
 import type { User } from "@/services/api/platzi-api.types"
 import { useAppTheme } from "@/theme/context"
 import type { ThemedStyle } from "@/theme/types"
+import { trackAction, trackElementLoading } from "@/utils/datadog"
 import { useDatadogViewLoadingComplete } from "@/utils/useDatadogViewTracking"
 
 interface UsersListScreenProps extends AppStackScreenProps<"UsersList"> {}
@@ -33,14 +34,18 @@ export const UsersListScreen: FC<UsersListScreenProps> = function UsersListScree
   useDatadogViewLoadingComplete(!isLoading && !error)
 
   const loadUsers = async () => {
+    const loadingTracker = trackElementLoading("FetchUsersList")
     try {
       setIsLoading(true)
       setError(null)
 
       const data = await fetchUsers()
       setUsers(data)
+      loadingTracker.success({ user_count: data.length })
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load users")
+      const errorMessage = err instanceof Error ? err.message : "Failed to load users"
+      setError(errorMessage)
+      loadingTracker.error(err)
       console.error("Error loading users:", err)
     } finally {
       setIsLoading(false)
@@ -52,6 +57,7 @@ export const UsersListScreen: FC<UsersListScreenProps> = function UsersListScree
   }, [])
 
   const handleUserPress = (user: User) => {
+    trackAction("UserSelectedForLogin", "tap", { user_id: user.id, user_role: user.role })
     navigation.navigate("AuthExample", {
       prefilledEmail: user.email,
       prefilledPassword: user.password,

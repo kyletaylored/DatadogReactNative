@@ -7,6 +7,7 @@ import { Text } from "@/components/Text"
 import type { DemoTabScreenProps } from "@/navigators/navigationTypes"
 import { useAppTheme } from "@/theme/context"
 import type { ThemedStyle } from "@/theme/types"
+import { trackAction } from "@/utils/datadog"
 
 const datadogLogo = require("@assets/images/logo.png")
 
@@ -15,18 +16,22 @@ export const DemoExamplesScreen: FC<DemoTabScreenProps<"DemoExamples">> =
     const { themed } = useAppTheme()
 
     function goToProducts() {
+      trackAction("NavigateToProducts", "tap", { source: "demo_examples" })
       navigation.navigate("ProductsList")
     }
 
     function goToUsers() {
+      trackAction("NavigateToUsers", "tap", { source: "demo_examples" })
       navigation.navigate("UsersList")
     }
 
     function goToAuth() {
+      trackAction("NavigateToAuth", "tap", { source: "demo_examples", mode: "direct_login" })
       navigation.navigate("AuthExample", {})
     }
 
     function goToWelcome() {
+      trackAction("NavigateToWelcome", "tap", { source: "demo_examples" })
       navigation.navigate("Welcome")
     }
 

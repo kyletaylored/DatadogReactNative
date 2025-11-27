@@ -18,7 +18,7 @@ import { fetchProduct } from "@/services/api/platzi-api"
 import type { Product } from "@/services/api/platzi-api.types"
 import { useAppTheme } from "@/theme/context"
 import type { ThemedStyle } from "@/theme/types"
-import { TrackedLoading } from "@/utils/useDatadogTiming"
+import { DatadogProfiler, TrackedLoading } from "@/utils/useDatadogTiming"
 import { useDatadogViewLoadingComplete } from "@/utils/useDatadogViewTracking"
 
 interface ProductDetailScreenProps extends AppStackScreenProps<"ProductDetail"> {}
@@ -97,8 +97,9 @@ export const ProductDetailScreen: FC<ProductDetailScreenProps> = function Produc
 
   return (
     <Screen preset="fixed" contentContainerStyle={themed($container)} safeAreaEdges={["bottom"]}>
-      <ScrollView>
-        <View style={themed($header)}>
+      <DatadogProfiler name="ProductDetailContent">
+        <ScrollView>
+          <View style={themed($header)}>
           <Text preset="default" size="xs" style={themed($subtitle)}>
             ID: {product.id} • Datadog RUM tracking
           </Text>
@@ -202,7 +203,8 @@ export const ProductDetailScreen: FC<ProductDetailScreenProps> = function Produc
           />
         </TrackedLoading>
 
-      </ScrollView>
+        </ScrollView>
+      </DatadogProfiler>
     </Screen>
   )
 }

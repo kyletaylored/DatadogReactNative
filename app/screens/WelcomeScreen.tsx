@@ -10,6 +10,8 @@ import type { AppStackScreenProps } from "@/navigators/navigationTypes"
 import { useAppTheme } from "@/theme/context"
 import { $styles } from "@/theme/styles"
 import type { ThemedStyle } from "@/theme/types"
+import { trackAction } from "@/utils/datadog"
+import { useDatadogTiming } from "@/utils/useDatadogTiming"
 import { useHeader } from "@/utils/useHeader"
 import { useSafeAreaInsetsStyle } from "@/utils/useSafeAreaInsetsStyle"
 
@@ -24,7 +26,11 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = function WelcomeScreen(_pro
   const { navigation } = _props
   const { logout } = useAuth()
 
+  // Track when the welcome screen is ready
+  useDatadogTiming("welcome_screen_mounted")
+
   function goNext() {
+    trackAction("StartDemo", "tap", { source: "welcome_screen" })
     navigation.navigate("Demo", { screen: "DemoShowroom", params: {} })
   }
 
