@@ -15,6 +15,7 @@ export const useDatadogTiming = (timingName: string, condition: boolean = true) 
     if (condition && !hasLogged.current) {
       try {
         DdRum.addTiming(timingName)
+        console.log(`[Datadog] ⏱️ Timing added: ${timingName}`)
         hasLogged.current = true
       } catch (error) {
         console.error(`[Datadog] Failed to add timing for ${timingName}:`, error)
