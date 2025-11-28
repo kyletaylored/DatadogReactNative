@@ -33,7 +33,9 @@
     "build:ios:sim:local": "mkdir -p build && dotenv -e .env -- eas build --profile preview --platform ios --local --output ./build/app.tar.gz",
     "build:android:apk": "mkdir -p build && ANDROID_HOME=$HOME/Library/Android/sdk dotenv -e .env -- eas build --profile preview --platform android --local --output ./build/app.apk",
     "upload:ios:datadog": "node scripts/generate-datadog-config.js --platform ios && dotenv -e .env -- datadog-ci synthetics upload-application --config datadog-ci.json --mobileApplicationVersionFilePath ./build/app.ipa --latest",
-    "upload:android:datadog": "node scripts/generate-datadog-config.js --platform android && dotenv -e .env -- datadog-ci synthetics upload-application --config datadog-ci.json --mobileApplicationVersionFilePath ./build/app.apk --latest"
+    "upload:android:datadog": "node scripts/generate-datadog-config.js --platform android && dotenv -e .env -- datadog-ci synthetics upload-application --config datadog-ci.json --mobileApplicationVersionFilePath ./build/app.apk --latest",
+    "release:ios": "npm run build:ios:ipa && npm run upload:ios:datadog",
+    "release:android": "npm run build:android:apk && npm run upload:android:datadog"
   },
   "dependencies": {
     "@datadog/mobile-react-native": "^2.13.2",

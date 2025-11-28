@@ -4,7 +4,25 @@
 
 This guide explains how to build your application (`.apk` or `.ipa`) and upload it to Datadog for Synthetic Mobile Testing.
 
-## 🤖 Android (Recommended for Testing)
+## 🚀 One-Command Releases
+
+We have "release" commands that build and upload in one step.
+
+**Android (Recommended for Testing)**
+
+```bash
+npm run release:android
+```
+
+**iOS (Requires Apple Developer Account)**
+
+```bash
+npm run release:ios
+```
+
+---
+
+## 🤖 Android (Manual Steps)
 
 Building an Android APK is free and doesn't require a developer account.
 
@@ -75,6 +93,11 @@ We added scripts to `package.json` for both platforms:
 - `build:ios:ipa`: Builds a local IPA using the `production` profile (requires signing).
 - `build:ios:sim:local`: Builds a Simulator app (`.tar.gz`) for local testing (no signing needed).
 - `upload:ios:datadog`: Uploads `./build/app.ipa`.
+
+**Release (Build + Upload)**
+
+- `release:android`: Runs `build:android:apk` + `upload:android:datadog`.
+- `release:ios`: Runs `build:ios:ipa` + `upload:ios:datadog`.
 
 ## ⚠️ Troubleshooting
 
