@@ -7,6 +7,7 @@ import { ExpoConfig, ConfigContext } from "@expo/config"
  * See https://docs.expo.dev/config-plugins/plugins/#add-typescript-support-and-convert-to-dynamic-app-config
  */
 import "tsx/cjs"
+const getVersion = require("./scripts/get-version")
 
 /**
  * @param config ExpoConfig coming from the static config app.json if it exists
@@ -16,11 +17,14 @@ import "tsx/cjs"
  */
 module.exports = ({ config }: ConfigContext): Partial<ExpoConfig> => {
   const existingPlugins = config.plugins ?? []
+  const dynamicVersion = getVersion()
 
   return {
     ...config,
+    version: dynamicVersion, // Set the Expo version
     extra: {
       ...config.extra,
+      version: dynamicVersion, // Expose to app via Constants
       // Datadog configuration from environment variables
       datadog: {
         clientToken: process.env.DATADOG_CLIENT_TOKEN,

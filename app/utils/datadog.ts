@@ -26,11 +26,13 @@ import {
  * @param clientToken - Your Datadog client token
  * @param applicationId - Your Datadog application ID
  * @param env - Environment (e.g., 'dev', 'staging', 'prod')
+ * @param version - Application version (e.g., '1.0.0' or '1.0.0-abc1234')
  */
 export const createDatadogConfig = (
   clientToken: string,
   applicationId: string,
   env: string = "dev",
+  version?: string,
 ) => {
   const config = new DatadogProviderConfiguration(
     clientToken,
@@ -40,6 +42,10 @@ export const createDatadogConfig = (
     true, // track XHR Resources
     true, // track Errors
   )
+
+  if (version) {
+    config.version = version
+  }
 
   // Set Datadog site
   config.site = "US1" // or 'US3', 'US5', 'EU1', 'AP1', etc.

@@ -40,10 +40,12 @@ export const NAVIGATION_PERSISTENCE_KEY = "NAVIGATION_STATE"
 
 // Get Datadog configuration from environment variables
 const datadogEnv = Constants.expoConfig?.extra?.datadog
+const appVersion = Constants.expoConfig?.extra?.version
 const datadogConfig = createDatadogConfig(
   datadogEnv?.clientToken || "",
   datadogEnv?.applicationId || "",
   datadogEnv?.env || (__DEV__ ? "dev" : "prod"),
+  appVersion,
 )
 
 // Web linking configuration
