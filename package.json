@@ -28,7 +28,12 @@
     "build:android:sim": "eas build --profile development --platform android --local",
     "build:android:device": "eas build --profile development:device --platform android --local",
     "build:android:preview": "eas build --profile preview --platform android --local",
-    "build:android:prod": "eas build --profile production --platform android --local"
+    "build:android:prod": "eas build --profile production --platform android --local",
+    "build:ios:ipa": "mkdir -p build && eas build --profile production --platform ios --local --output ./build/app.ipa",
+    "build:ios:sim:local": "mkdir -p build && eas build --profile preview --platform ios --local --output ./build/app.tar.gz",
+    "build:android:apk": "mkdir -p build && ANDROID_HOME=$HOME/Library/Android/sdk eas build --profile preview --platform android --local --output ./build/app.apk",
+    "upload:ios:datadog": "datadog-ci synthetics upload-application --mobileApplicationVersionFilePath ./build/app.ipa --versionName \"1.0.$npm_package_version\" --latest",
+    "upload:android:datadog": "datadog-ci synthetics upload-application --mobileApplicationVersionFilePath ./build/app.apk --versionName \"1.0.$npm_package_version\" --latest"
   },
   "dependencies": {
     "@datadog/mobile-react-native": "^2.13.2",
@@ -74,6 +79,7 @@
     "@babel/core": "^7.20.0",
     "@babel/preset-env": "^7.20.0",
     "@babel/runtime": "^7.20.0",
+    "@datadog/datadog-ci": "^4.2.2",
     "@testing-library/react-native": "^13.2.0",
     "@types/jest": "^29.5.14",
     "@types/react": "~19.1.10",

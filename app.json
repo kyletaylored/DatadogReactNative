@@ -27,7 +27,20 @@
   "ios": {
     "icon": "./assets/images/app-icon-ios.png",
     "supportsTablet": true,
-    "bundleIdentifier": "com.kyletaylored.DatadogReactNative"
+    "bundleIdentifier": "com.kyletaylored.DatadogReactNative",
+    "privacyManifests": {
+      "NSPrivacyAccessedAPITypes": [
+        {
+          "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
+          "NSPrivacyAccessedAPITypeReasons": [
+            "CA92.1"
+          ]
+        }
+      ]
+    },
+    "infoPlist": {
+      "ITSAppUsesNonExemptEncryption": false
+    }
   },
   "web": {
     "favicon": "./assets/images/app-icon-web-favicon.png",
@@ -62,6 +75,12 @@
   "extra": {
     "ignite": {
       "version": "11.3.2"
+    },
+    "datadog": {
+      "env": "dev"
+    },
+    "eas": {
+      "projectId": "78e0f39b-c959-485b-ae58-4ed80f21558d"
     }
   }
 }

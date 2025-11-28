@@ -35,6 +35,11 @@ export const DemoExamplesScreen: FC<DemoTabScreenProps<"DemoExamples">> =
       navigation.navigate("Welcome")
     }
 
+    function goToScenarios() {
+      trackAction("NavigateToScenarios", "tap", { source: "demo_examples" })
+      navigation.navigate("DatadogScenarios")
+    }
+
     return (
       <Screen preset="scroll" contentContainerStyle={themed($container)} safeAreaEdges={["top"]}>
         <View style={themed($header)}>
@@ -119,6 +124,26 @@ export const DemoExamplesScreen: FC<DemoTabScreenProps<"DemoExamples">> =
           </Text>
           <Text preset="default" size="sm" style={themed($lastButtonDescription)}>
             • Test 401 errors with bad credentials button
+          </Text>
+        </View>
+
+        <View style={themed($section)}>
+          <Text preset="bold" size="lg" style={themed($sectionTitle)}>
+            🧪 RUM Scenarios
+          </Text>
+
+          <Button
+            text="Run Test Scenarios"
+            onPress={goToScenarios}
+            preset="reversed"
+            style={themed($button)}
+            accessibilityLabel="Run Datadog Test Scenarios"
+          />
+          <Text preset="default" size="sm" style={themed($buttonDescription)}>
+            • Interactive tests for timing, errors, and profiler
+          </Text>
+          <Text preset="default" size="sm" style={themed($lastButtonDescription)}>
+            • Verify stuck loading states and stuck processes
           </Text>
         </View>
 

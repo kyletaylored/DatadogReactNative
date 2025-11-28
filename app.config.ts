@@ -20,6 +20,7 @@ module.exports = ({ config }: ConfigContext): Partial<ExpoConfig> => {
   return {
     ...config,
     extra: {
+      ...config.extra,
       // Datadog configuration from environment variables
       datadog: {
         clientToken: process.env.DATADOG_CLIENT_TOKEN,

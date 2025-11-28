@@ -11,6 +11,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import Config from "@/config"
 import { useAuth } from "@/context/AuthContext"
 import { AuthExampleScreen } from "@/screens/AuthExampleScreen"
+import { DatadogScenariosScreen } from "@/screens/DatadogScenariosScreen"
 import { ErrorBoundary } from "@/screens/ErrorScreen/ErrorBoundary"
 import { LoginScreen } from "@/screens/LoginScreen"
 import { ProductDetailScreen } from "@/screens/ProductDetailScreen"
@@ -92,6 +93,16 @@ const AppStack = () => {
             options={{
               headerShown: true,
               title: "Auth Example",
+              headerBackTitle: "Back",
+            }}
+          />
+
+          <Stack.Screen
+            name="DatadogScenarios"
+            component={DatadogScenariosScreen}
+            options={{
+              headerShown: true,
+              title: "RUM Scenarios",
               headerBackTitle: "Back",
             }}
           />
