@@ -29,11 +29,11 @@
     "build:android:device": "eas build --profile development:device --platform android --local",
     "build:android:preview": "eas build --profile preview --platform android --local",
     "build:android:prod": "eas build --profile production --platform android --local",
-    "build:ios:ipa": "mkdir -p build && eas build --profile production --platform ios --local --output ./build/app.ipa",
-    "build:ios:sim:local": "mkdir -p build && eas build --profile preview --platform ios --local --output ./build/app.tar.gz",
-    "build:android:apk": "mkdir -p build && ANDROID_HOME=$HOME/Library/Android/sdk eas build --profile preview --platform android --local --output ./build/app.apk",
-    "upload:ios:datadog": "node scripts/generate-datadog-config.js --platform ios && datadog-ci synthetics upload-application --config datadog-ci.json --mobileApplicationVersionFilePath ./build/app.ipa --latest",
-    "upload:android:datadog": "node scripts/generate-datadog-config.js --platform android && datadog-ci synthetics upload-application --config datadog-ci.json --mobileApplicationVersionFilePath ./build/app.apk --latest"
+    "build:ios:ipa": "mkdir -p build && dotenv -e .env -- eas build --profile production --platform ios --local --output ./build/app.ipa",
+    "build:ios:sim:local": "mkdir -p build && dotenv -e .env -- eas build --profile preview --platform ios --local --output ./build/app.tar.gz",
+    "build:android:apk": "mkdir -p build && ANDROID_HOME=$HOME/Library/Android/sdk dotenv -e .env -- eas build --profile preview --platform android --local --output ./build/app.apk",
+    "upload:ios:datadog": "node scripts/generate-datadog-config.js --platform ios && dotenv -e .env -- datadog-ci synthetics upload-application --config datadog-ci.json --mobileApplicationVersionFilePath ./build/app.ipa --latest",
+    "upload:android:datadog": "node scripts/generate-datadog-config.js --platform android && dotenv -e .env -- datadog-ci synthetics upload-application --config datadog-ci.json --mobileApplicationVersionFilePath ./build/app.apk --latest"
   },
   "dependencies": {
     "@datadog/mobile-react-native": "^2.13.2",
@@ -85,6 +85,7 @@
     "@types/react": "~19.1.10",
     "babel-jest": "^29.2.1",
     "dependency-cruiser": "^17.0.2",
+    "dotenv-cli": "^11.0.0",
     "eslint": "^8.57.0",
     "eslint-config-expo": "~10.0.0",
     "eslint-config-prettier": "^9.1.0",

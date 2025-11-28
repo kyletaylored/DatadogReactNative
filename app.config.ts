@@ -49,6 +49,17 @@ module.exports = ({ config }: ConfigContext): Partial<ExpoConfig> => {
         ],
       },
     },
-    plugins: [...existingPlugins],
+    plugins: [
+      ...existingPlugins,
+      [
+        "expo-datadog",
+        {
+          errorTracking: {
+            iosDsyms: true,
+            androidMapping: true,
+          },
+        },
+      ],
+    ],
   }
 }
