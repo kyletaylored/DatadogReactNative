@@ -71,6 +71,31 @@ import { DatadogProfiler } from "@/utils/useDatadogTiming"
 **Result:**
 Logs a custom action named `ComplexProductList_rendered` with full performance metrics attached.
 
+
+### 5. `useDatadogViewLoadingComplete` (View Timing)
+Manually marks the "Loading Time" of a view in Datadog RUM. This corresponds to the `loading_time` metric in the Views dashboard.
+
+**Usage:**
+```tsx
+import { useDatadogViewLoadingComplete } from "@/utils/useDatadogViewTracking"
+
+const MyScreen = () => {
+  const [dataLoaded, setDataLoaded] = useState(false)
+  
+  // Call this when your critical content is ready
+  useDatadogViewLoadingComplete(dataLoaded)
+
+  useEffect(() => {
+    fetchData().then(() => setDataLoaded(true))
+  }, [])
+  
+  return <View>...</View>
+}
+```
+
+**Result:**
+Updates the active view's "Loading Time" metric. Useful for tracking "Time to Interactive" accurately.
+
 ## Use Cases
 
 - **Lazy Loaded Content**: Track exactly when content appears after a fetch (`TrackedLoading`).

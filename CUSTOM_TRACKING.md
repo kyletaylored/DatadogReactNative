@@ -28,18 +28,30 @@ const loadTracker = trackElementLoading("UserProfile")
 
 try {
   await fetchUserProfile()
-  // specific success
+  // Success (tracks duration)
   loadTracker.success({ user_id: 123 }) 
 } catch (error) {
-  // specific failure
-  loadTracker.error(error)
+  // Failure (tracks time-until-failure & specific error type)
+  loadTracker.error(error, "network_timeout")
 }
 ```
 
 #### Why this is useful:
-- **Find "Stuck" Sessions**: Query for `has_pending_loads: true` or `loading_elements: "UserProfile"` to find sessions where users abandoned the app while waiting.
+- **Structured State**: Creates a global `components` object in RUM events:
+  ```json
+  {
+    "components": {
+      "UserProfile": {
+        "loaded": false,
+        "duration": 4500
+      }
+    },
+    "has_pending_loads": true
+  }
+  ```
+- **Find "Stuck" Sessions**: Query for `has_pending_loads: true` or `@components.UserProfile.loaded:false`.
 - **Performance Metrics**: Automatically tracks duration (`duration_ms`) for successful loads.
-- **Error Correlation**: Automatically correlates loading errors with the specific element name.
+- **Granular Errors**: Classify errors with `error_type` (e.g., "network_timeout", "validation_error") for better filtering.
 
 ### 3. Custom Actions
 Helper to log consistent custom actions:
