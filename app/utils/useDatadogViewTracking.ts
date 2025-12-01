@@ -3,43 +3,9 @@
  */
 import { useEffect, useRef } from "react"
 import { DdRum } from "@datadog/mobile-react-native"
-import { useNavigationState } from "@react-navigation/native"
 
 /**
- * Hook that tracks view loading times in Datadog RUM
- * 
- * This hook listens to navigation state changes and marks views as loaded
- * when navigation completes, calling DdRum.addViewLoadingTime(true)
- */
-export const useDatadogViewTracking = () => {
-  const routeName = useNavigationState((state) => state?.routes[state.index]?.name)
-  const previousRouteName = useRef<string | undefined>(undefined)
-  const isInitialLoad = useRef(true)
-
-  useEffect(() => {
-    // Skip the very first render to avoid tracking app initialization
-    if (isInitialLoad.current) {
-      isInitialLoad.current = false
-      previousRouteName.current = routeName
-      return
-    }
-
-    // If route name changed, the previous view has finished loading
-    if (routeName && routeName !== previousRouteName.current) {
-      try {
-        console.log(`[Datadog] View loaded: ${routeName}`)
-        // Mark the view as loaded - this tells Datadog the view is ready
-        DdRum.addViewLoadingTime(true)
-      } catch (error) {
-        console.error("[Datadog] Error tracking view loading time:", error)
-      }
-      previousRouteName.current = routeName
-    }
-  }, [routeName])
-}
-
-/**
- * Alternative hook for component-level tracking
+ * Hook for component-level tracking
  * Use this in individual screen components to track when they finish loading
  *
  * @param isLoaded - Whether the view has finished loading
@@ -50,7 +16,8 @@ export const useDatadogViewLoadingComplete = (isLoaded: boolean) => {
   useEffect(() => {
     if (isLoaded && !hasTracked.current) {
       try {
-        console.log("[Datadog] View finished loading")
+        const timestamp = new Date().toISOString()
+        console.log(`[Datadog] ⏱️ View finished loading at ${timestamp}`)
         DdRum.addViewLoadingTime(true)
         hasTracked.current = true
       } catch (error) {

@@ -1,4 +1,4 @@
-import { FC, useState } from "react"
+import { FC, useEffect, useState } from "react"
 import { ActivityIndicator, Image, ImageStyle, TextStyle, View, ViewStyle } from "react-native"
 
 import { Button } from "@/components/Button"
@@ -33,8 +33,19 @@ export const DatadogScenariosScreen: FC<DatadogScenariosScreenProps> =
     // State for Scenario 4 (Handled Error)
     const [errorResult, setErrorResult] = useState<string | null>(null)
 
-    // Track view ready
-    useDatadogViewLoadingComplete(true)
+    // State for simulating view loading
+    const [viewReady, setViewReady] = useState(false)
+
+    // Track view ready - triggered after simulated delay
+    useDatadogViewLoadingComplete(viewReady)
+
+    useEffect(() => {
+      // Simulate a view loading process (e.g. fetching initial data)
+      const timer = setTimeout(() => {
+        setViewReady(true)
+      }, 500) // 500ms artificial delay to make "Loading Time" visible in RUM
+      return () => clearTimeout(timer)
+    }, [])
 
     // --- Scenario 1: Component Timing ---
     const handleToggleImage = () => {

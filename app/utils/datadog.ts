@@ -192,34 +192,55 @@ export const trackAction = (
   }
 }
 
-// Track currently loading elements
-const activeLoadingElements = new Set<string>()
+// Track component states: { loaded: boolean, duration: number, startTime: number }
+interface ComponentLoadState {
+  loaded: boolean
+  duration: number
+  startTime: number
+}
+
+const componentLoadStates = new Map<string, ComponentLoadState>()
 
 /**
  * Track the loading state of a UI element or process.
  * Returns callbacks to mark the load as successful or failed.
  *
- * This updates the global 'loading_elements' attribute, allowing you to find
- * sessions where elements started loading but never finished (stuck/abandoned).
+ * This updates the global 'components' attribute with structured data:
+ * components: {
+ *   [elementName]: {
+ *     loaded: boolean,
+ *     duration: number
+ *   }
+ * }
  *
  * @param elementName - Unique name for the element/process (e.g., "CheckoutButton", "UserProfile")
  */
 export const trackElementLoading = (elementName: string) => {
-  // Add to active set
-  activeLoadingElements.add(elementName)
-  updateLoadingAttributes()
-
   const startTime = Date.now()
+
+  // Initialize state: not loaded, 0 duration
+  componentLoadStates.set(elementName, {
+    loaded: false,
+    duration: 0,
+    startTime,
+  })
+  updateLoadingAttributes()
 
   return {
     /**
      * Call when the element successfully finishes loading
      */
     success: (additionalAttributes?: Record<string, unknown>) => {
-      activeLoadingElements.delete(elementName)
+      const duration = Date.now() - startTime
+
+      // Update state: loaded, set duration
+      componentLoadStates.set(elementName, {
+        loaded: true,
+        duration,
+        startTime,
+      })
       updateLoadingAttributes()
 
-      const duration = Date.now() - startTime
       DdRum.addAction(RumActionType.CUSTOM, "Element Loaded", {
         element_name: elementName,
         duration_ms: duration,
@@ -231,8 +252,15 @@ export const trackElementLoading = (elementName: string) => {
     /**
      * Call when the element fails to load
      */
-    error: (error?: Error | unknown) => {
-      activeLoadingElements.delete(elementName)
+    error: (error?: Error | unknown, errorType: string = "component_load_failure") => {
+      const duration = Date.now() - startTime
+
+      // Update state: NOT loaded, but track duration until failure
+      componentLoadStates.set(elementName, {
+        loaded: false,
+        duration, // Duration until failure
+        startTime,
+      })
       updateLoadingAttributes()
 
       DdRum.addError(
@@ -242,6 +270,7 @@ export const trackElementLoading = (elementName: string) => {
         {
           element_name: elementName,
           failed_load: true,
+          error_type: errorType,
         },
       )
     },
@@ -249,16 +278,31 @@ export const trackElementLoading = (elementName: string) => {
 }
 
 /**
- * Helper to update the global RUM context with the current list of loading elements
+ * Helper to update the global RUM context with the current structured component states
  */
 const updateLoadingAttributes = () => {
   try {
-    const loadingList = Array.from(activeLoadingElements)
-    // 'loading_elements' will contain the names of all elements currently pending
+    const componentsData: Record<string, { loaded: boolean; duration: number }> = {}
+
+    // Convert Map to the requested object structure
+    componentLoadStates.forEach((state, name) => {
+      componentsData[name] = {
+        loaded: state.loaded,
+        duration: state.duration,
+      }
+    })
+
+    // Calculate pending count for quick filtering
+    let pendingCount = 0
+    componentLoadStates.forEach((state) => {
+      if (!state.loaded) pendingCount++
+    })
+
     DdSdkReactNative.setAttributes({
-      loading_elements: loadingList,
-      // 'has_pending_loads' is a quick boolean filter
-      has_pending_loads: loadingList.length > 0,
+      components: componentsData,
+      // Keep these helpful high-level flags
+      has_pending_loads: pendingCount > 0,
+      pending_load_count: pendingCount,
     })
   } catch (error) {
     console.error("[Datadog] ❌ Error updating loading attributes:", error)

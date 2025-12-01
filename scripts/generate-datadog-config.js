@@ -9,7 +9,7 @@ const platformArgIndex = args.indexOf("--platform")
 const platform = platformArgIndex !== -1 ? args[platformArgIndex + 1] : null
 
 // Try to load .env file manually
-const envPath = path.resolve(__dirname, "../.env")
+const envPath = path.resolve(process.cwd(), ".env")
 if (fs.existsSync(envPath)) {
   const envContent = fs.readFileSync(envPath, "utf8")
   envContent.split("\n").forEach((line) => {
@@ -55,7 +55,7 @@ if (!config.mobileApplicationId) {
   )
 }
 
-const outputPath = path.resolve(__dirname, "../datadog-ci.json")
+const outputPath = path.resolve(process.cwd(), "datadog-ci.json")
 fs.writeFileSync(outputPath, JSON.stringify(config, null, 2))
 
 console.log(`✅ Generated ${outputPath} from environment variables.`)
